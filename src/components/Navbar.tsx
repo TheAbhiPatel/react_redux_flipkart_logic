@@ -1,7 +1,10 @@
 import { NavLink } from "react-router-dom";
 import { BiSolidCart } from "react-icons/bi";
+import { useAppSelector } from "../store/hooks";
 
 const Navbar = () => {
+  const cartItems = useAppSelector((state) => state.cart);
+
   return (
     <header>
       <div className="w-full mx-auto flex  p-5 px-10  justify-between items-center bg-slate-700 fixed top-0 z-10">
@@ -34,7 +37,7 @@ const Navbar = () => {
           >
             <BiSolidCart className="text-3xl  " />
             <span className="absolute -top-3 -right-3 bg-red-500 px-2 rounded-full text-sm">
-              0
+              {cartItems.length}
             </span>
           </NavLink>
         </nav>
