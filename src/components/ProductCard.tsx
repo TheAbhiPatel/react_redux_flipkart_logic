@@ -1,12 +1,20 @@
 import { FC } from "react";
 import { IProduct } from "../interfaces";
 import { NavLink } from "react-router-dom";
+import { useAppDispatch } from "../store/hooks";
+import { addCartItem } from "../store/cartSlice";
 
 interface IProductCardProps {
   product: IProduct;
 }
 
 const ProductCard: FC<IProductCardProps> = ({ product }) => {
+  const dipatch = useAppDispatch();
+
+  const handleAddItem = () => {
+    dipatch(addCartItem(product));
+  };
+
   return (
     <div className="relative mt-24 m-10 flex w-full max-w-[18rem] flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
       <NavLink
@@ -88,9 +96,9 @@ const ProductCard: FC<IProductCardProps> = ({ product }) => {
             </span>
           </div>
         </div>
-        <NavLink
-          to={`/product/${product.id}`}
-          className="flex items-center justify-center rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
+        <div
+          onClick={handleAddItem}
+          className="flex items-center justify-center rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300 cursor-pointer"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -107,7 +115,7 @@ const ProductCard: FC<IProductCardProps> = ({ product }) => {
             />
           </svg>
           Add to cart
-        </NavLink>
+        </div>
       </div>
     </div>
   );

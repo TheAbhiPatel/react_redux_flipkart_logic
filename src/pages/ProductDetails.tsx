@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "../utils/axiosInstance";
 import { NavLink, useParams } from "react-router-dom";
 import { IProduct } from "../interfaces";
+import { useAppDispatch } from "../store/hooks";
+import { addCartItem } from "../store/cartSlice";
 
 const ProductDetails = () => {
   const parmas = useParams();
+  const dispatch = useAppDispatch();
   const [product, setProduct] = useState<IProduct>();
   const [viewImage, setViewImage] = useState("");
 
@@ -21,6 +24,10 @@ const ProductDetails = () => {
       setProduct(res.data);
       setViewImage(res.data.thumbnail);
     }
+  };
+
+  const handleAddItem = () => {
+    if (product) dispatch(addCartItem(product));
   };
 
   return (
@@ -240,6 +247,7 @@ const ProductDetails = () => {
                 <span className="text-base">/month</span>
               </div>
               <button
+                onClick={handleAddItem}
                 type="button"
                 className="inline-flex items-center justify-center rounded-md border-2 border-transparent bg-slate-600 bg-none px-12 py-3 text-center text-base font-bold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-slate-700"
               >
