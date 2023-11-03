@@ -7,7 +7,6 @@ import { useSearchParams } from "react-router-dom";
 const Search = () => {
   const [products, setProducts] = useState<IProduct[]>([]);
   const qurey = useSearchParams()[0].get("q");
-  console.log("--- products -->", qurey);
 
   /** ---> fetching products on component load */
   useEffect(() => {

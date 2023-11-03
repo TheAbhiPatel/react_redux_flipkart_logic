@@ -23,9 +23,10 @@ const CategoriesMap = () => {
   return (
     <div className="bg-slate-600 py-10 pl-3 sticky top-20 h-screen overflow-scroll">
       <h2 className="text-xl font-bold">Categories </h2>
-      {categories.map((item) => {
+      {categories.map((item, idx) => {
         return (
           <div
+            key={idx}
             onClick={() => handleNavigate(`/products/category/${item}`)}
             className=" px-3 flex py-1 hover:bg-blue-400 cursor-pointer duration-500 rounded-md"
           >
