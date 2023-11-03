@@ -1,20 +1,34 @@
 import { useEffect, useState } from "react";
-import ProductCard from "../components/ProductCard";
-import axiosInstance from "../utils/axiosInstance";
 import { IProduct } from "../interfaces";
-
+import axiosInstance from "../utils/axiosInstance";
+import ProductCard from "../components/ProductCard";
 import CategoriesMap from "../components/CategoriesMap";
+import { useParams } from "react-router-dom";
 
-const Home = () => {
+const Categories = () => {
   const [products, setProducts] = useState<IProduct[]>([]);
+  const params = useParams();
 
   /** ---> fetching products on component load */
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [params]);
+
+  /** ---> scrolling to top on page load */
+  useEffect(() => {
+    const scrollToTop = () => {
+      window.scrollTo({
+        top: 0,
+        behavior: "instant",
+      });
+    };
+    scrollToTop();
+  }, [params]);
 
   const fetchProducts = async () => {
-    const res = await axiosInstance.get("/products?limit=30");
+    const res = await axiosInstance.get(
+      `/products/category/${params.category}`
+    );
     if (res.data) {
       setProducts(res.data.products);
     }
@@ -36,4 +50,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Categories;

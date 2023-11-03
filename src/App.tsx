@@ -6,6 +6,7 @@ import ProductDetails from "./pages/ProductDetails";
 import Navbar from "./components/Navbar";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
+import Categories from "./pages/Categories";
 
 const App = () => {
   return (
@@ -15,6 +16,12 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/product/:id" element={<ProductDetails />} />
+          <Route path="/products/">
+            <Route
+              path="/products/category/:category"
+              element={<Categories />}
+            />
+          </Route>
           <Route path="/cart" element={<Cart />} />
           <Route path="/search" element={<Search />} />
         </Routes>
