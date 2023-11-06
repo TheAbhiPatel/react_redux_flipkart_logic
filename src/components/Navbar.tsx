@@ -1,7 +1,7 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { BiSolidCart } from "react-icons/bi";
 import { useAppSelector } from "../store/hooks";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axiosInstance from "../utils/axiosInstance";
 import { IProduct } from "../interfaces";
 
@@ -39,18 +39,21 @@ const Navbar = () => {
   }, [searchText]);
 
   const fetchProductsQuries = async () => {
-    console.log("i am calling in api funct");
-    const res = await axiosInstance.get(`/products/search?q=${searchText}`);
-    if (res.data) {
-      setSearchSuggetionList(
-        res.data.products?.map((item: IProduct) => {
-          const { title, brand } = item;
-          return {
-            title,
-            brand,
-          };
-        })
-      );
+    try {
+      const res = await axiosInstance.get(`/products/search?q=${searchText}`);
+      if (res.data) {
+        setSearchSuggetionList(
+          res.data.products?.map((item: IProduct) => {
+            const { title, brand } = item;
+            return {
+              title,
+              brand,
+            };
+          })
+        );
+      }
+    } catch (error) {
+      console.log("error while api calling --->", error);
     }
   };
 
@@ -86,6 +89,45 @@ const Navbar = () => {
     };
   };
 
+  /** ---> selecting list by key up and down */
+
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const listRef = useRef(null);
+
+  const handleKeyDown = (e: any) => {
+    if (e.key === "ArrowUp" && selectedIndex > 0) {
+      setSelectedIndex(selectedIndex - 1);
+    } else if (
+      e.key === "ArrowDown" &&
+      selectedIndex < searchSuggetionList.length - 1
+    ) {
+      setSelectedIndex(selectedIndex + 1);
+    } else if (e.key === "Enter") {
+      handleSelection();
+    }
+  };
+
+  const handleSelection = () => {
+    const selectedValue = searchSuggetionList[selectedIndex];
+    // Call your function with the selected value
+    console.log("Selected:", selectedValue);
+  };
+
+  useEffect(() => {
+    // const selectedElement = listRef?.current?.children[selectedIndex];
+    // if (selectedElement) {
+    //   selectedElement.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    // }
+
+    const listElement = listRef.current;
+
+    listElement.focus();
+    listElement.addEventListener("keydown", handleKeyDown);
+    return () => {
+      listElement.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [selectedIndex]);
+
   return (
     <header>
       <div className="w-full mx-auto flex  p-5 px-10  justify-between items-center bg-slate-700 fixed top-0 z-10">
@@ -105,26 +147,31 @@ const Navbar = () => {
             className="w-full bg-gray-100 text-gray-800 px-4 py-2 rounded-md "
           />
           <div
-            className={`absolute top-12 left-0 right-0 min-h-32 bg-white rounded-md shadow-lg ${
+            className={`absolute top-12 left-0 right-0 min-h-32 max-h-60 bg-white rounded-md shadow-lg overflow-scroll ${
               isInputFocused ? "block" : "hidden"
             }`}
           >
-            <ul className="text-gray-600 px-3 py-2">
-              <li>Search results</li>
+            <ul ref={listRef} tabIndex={0} className="text-gray-600 px-3 py-2">
+              <span>Search results</span>
 
               {searchSuggetionList.length !== 0 ? (
-                searchSuggetionList
-                  ?.slice(0, 5)
-                  .map((item: { title: string; brand: string }, idx) => {
+                searchSuggetionList.map(
+                  (item: { title: string; brand: string }, idx) => {
                     return (
-                      <li key={idx} className="leading-3 my-4">
+                      <li
+                        key={idx}
+                        className={`leading-3 my-4 p-2 rounded-md ${
+                          selectedIndex === idx ? "bg-gray-300" : ""
+                        }`}
+                      >
                         <span>{item.title}</span> <br />{" "}
                         <span className="text-gray-400 text-xs ">
                           {item.brand}
                         </span>
                       </li>
                     );
-                  })
+                  }
+                )
               ) : (
                 <div className="w-full flex justify-center items-center h-32">
                   <span>No search results</span>
